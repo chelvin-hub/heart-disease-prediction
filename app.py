@@ -1,0 +1,265 @@
+import streamlit as st
+import pandas as pd
+import joblib
+import matplotlib.pyplot as plt
+
+# Konfigurasi halaman
+st.set_page_config(
+    page_title="Heart Disease Prediction",
+    page_icon="🫀",
+    layout="wide"
+)
+
+# Load model
+@st.cache_resource
+def load_model():
+    return joblib.load("heart_model.pkl")
+
+# Load dataset
+@st.cache_data
+def load_data():
+    return pd.read_csv("heart_clean.csv")
+
+model = load_model()
+df = load_data()
+
+# Sidebar
+st.sidebar.title("🫀 Menu")
+
+menu = st.sidebar.radio(
+    "Pilih Halaman",
+    [
+        "Home",
+        "Dataset",
+        "EDA",
+        "Prediksi",
+        "Tentang Model"
+    ]
+)
+
+# =========================
+# HOME
+# =========================
+
+if menu == "Home":
+
+    st.title("🫀 Heart Disease Prediction")
+
+    st.write("""
+    Aplikasi ini digunakan untuk melakukan prediksi penyakit jantung
+    menggunakan Machine Learning dengan algoritma CatBoost Classifier.
+    """)
+
+    st.subheader("Tujuan Aplikasi")
+
+    st.write("""
+    Aplikasi ini dibuat untuk membantu melakukan prediksi berdasarkan
+    data kesehatan pasien.
+    """)
+
+    st.subheader("Algoritma")
+
+    st.write("CatBoost Classifier")
+
+
+# =========================
+# DATASET
+# =========================
+
+elif menu == "Dataset":
+
+    st.title("📊 Dataset")
+
+    st.write("Dataset yang digunakan dalam aplikasi.")
+
+    st.dataframe(df)
+
+    st.subheader("Informasi Dataset")
+
+    st.write("Jumlah Baris:", df.shape[0])
+
+    st.write("Jumlah Kolom:", df.shape[1])
+
+
+# =========================
+# EDA
+# =========================
+
+elif menu == "EDA":
+
+    st.title("📈 Exploratory Data Analysis")
+
+    st.subheader("Statistik Dataset")
+
+    st.dataframe(df.describe())
+
+    st.subheader("Distribusi Target")
+
+    if "target" in df.columns:
+
+        fig, ax = plt.subplots()
+
+        df["target"].value_counts().plot(
+            kind="bar",
+            ax=ax
+        )
+
+        st.pyplot(fig)
+
+
+# =========================
+# PREDIKSI
+# =========================
+
+elif menu == "Prediksi":
+
+    st.title("🤖 Prediksi Penyakit Jantung")
+
+    st.write("Masukkan data pasien di bawah ini.")
+
+    age = st.number_input(
+        "Umur",
+        min_value=1,
+        max_value=100,
+        value=50
+    )
+
+    sex = st.selectbox(
+        "Jenis Kelamin",
+        [0, 1]
+    )
+
+    cp = st.selectbox(
+        "Chest Pain Type",
+        [0, 1, 2, 3]
+    )
+
+    trestbps = st.number_input(
+        "Tekanan Darah",
+        min_value=50,
+        max_value=250,
+        value=120
+    )
+
+    chol = st.number_input(
+        "Kolesterol",
+        min_value=100,
+        max_value=600,
+        value=200
+    )
+
+    fbs = st.selectbox(
+        "Fasting Blood Sugar",
+        [0, 1]
+    )
+
+    restecg = st.selectbox(
+        "Resting ECG",
+        [0, 1, 2]
+    )
+
+    thalach = st.number_input(
+        "Maximum Heart Rate",
+        min_value=50,
+        max_value=250,
+        value=150
+    )
+
+    exang = st.selectbox(
+        "Exercise Induced Angina",
+        [0, 1]
+    )
+
+    oldpeak = st.number_input(
+        "Oldpeak",
+        min_value=0.0,
+        max_value=10.0,
+        value=1.0
+    )
+
+    slope = st.selectbox(
+        "Slope",
+        [0, 1, 2]
+    )
+
+    ca = st.selectbox(
+        "CA",
+        [0, 1, 2, 3, 4]
+    )
+
+    thal = st.selectbox(
+        "Thal",
+        [0, 1, 2, 3]
+    )
+
+    # Membuat data input
+    input_data = pd.DataFrame(
+        [[
+            age,
+            sex,
+            cp,
+            trestbps,
+            chol,
+            fbs,
+            restecg,
+            thalach,
+            exang,
+            oldpeak,
+            slope,
+            ca,
+            thal
+        ]],
+        columns=[
+            "age",
+            "sex",
+            "cp",
+            "trestbps",
+            "chol",
+            "fbs",
+            "restecg",
+            "thalach",
+            "exang",
+            "oldpeak",
+            "slope",
+            "ca",
+            "thal"
+        ]
+    )
+
+    if st.button("Prediksi"):
+
+        prediction = model.predict(input_data)
+
+        if prediction[0] == 1:
+
+            st.success("Hasil Prediksi: Memiliki indikasi penyakit jantung")
+
+        else:
+
+            st.info("Hasil Prediksi: Tidak memiliki indikasi penyakit jantung")
+
+
+# =========================
+# TENTANG MODEL
+# =========================
+
+elif menu == "Tentang Model":
+
+    st.title("ℹ️ Tentang Model")
+
+    st.write("""
+    Model Machine Learning yang digunakan adalah CatBoost Classifier.
+
+    Dataset dibagi menjadi:
+
+    - 80% Data Training
+    - 20% Data Testing
+
+    Evaluasi model dilakukan menggunakan:
+
+    - Accuracy
+    - Classification Report
+    - Confusion Matrix
+    - ROC Curve
+    - AUC Score
+    """)

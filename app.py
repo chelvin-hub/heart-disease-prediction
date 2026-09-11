@@ -124,15 +124,31 @@ elif menu == "Prediksi":
         value=50
     )
 
-    sex = st.selectbox(
-        "Jenis Kelamin",
-        [0, 1]
-    )
+   sex_option = st.selectbox(
+    "Jenis Kelamin",
+    ["Perempuan", "Laki-laki"]
+)
 
-    cp = st.selectbox(
-        "Chest Pain Type",
-        [0, 1, 2, 3]
-    )
+sex = 0 if sex_option == "Perempuan" else 1
+
+  cp_option = st.selectbox(
+    "Jenis Nyeri Dada",
+    [
+        "Typical Angina",
+        "Atypical Angina",
+        "Non-anginal Pain",
+        "Asymptomatic"
+    ]
+)
+
+cp_mapping = {
+    "Typical Angina": 0,
+    "Atypical Angina": 1,
+    "Non-anginal Pain": 2,
+    "Asymptomatic": 3
+}
+
+cp = cp_mapping[cp_option]
 
     trestbps = st.number_input(
         "Tekanan Darah",
@@ -148,15 +164,32 @@ elif menu == "Prediksi":
         value=200
     )
 
-    fbs = st.selectbox(
-        "Fasting Blood Sugar",
-        [0, 1]
-    )
+  fbs_option = st.selectbox(
+    "Gula Darah Puasa",
+    [
+        "Normal",
+        "Tinggi (> 120 mg/dl)"
+    ]
+)
 
-    restecg = st.selectbox(
-        "Resting ECG",
-        [0, 1, 2]
-    )
+fbs = 0 if fbs_option == "Normal" else 1
+
+  restecg_option = st.selectbox(
+    "Hasil ECG Saat Istirahat",
+    [
+        "Normal",
+        "Kelainan ST-T",
+        "Hipertrofi Ventrikel Kiri"
+    ]
+)
+
+restecg_mapping = {
+    "Normal": 0,
+    "Kelainan ST-T": 1,
+    "Hipertrofi Ventrikel Kiri": 2
+}
+
+restecg = restecg_mapping[restecg_option]
 
     thalach = st.number_input(
         "Maximum Heart Rate",
@@ -165,10 +198,15 @@ elif menu == "Prediksi":
         value=150
     )
 
-    exang = st.selectbox(
-        "Exercise Induced Angina",
-        [0, 1]
-    )
+  exang_option = st.selectbox(
+    "Nyeri Dada Saat Berolahraga",
+    [
+        "Tidak",
+        "Ya"
+    ]
+)
+
+exang = 0 if exang_option == "Tidak" else 1
 
     oldpeak = st.number_input(
         "Oldpeak",
@@ -177,20 +215,62 @@ elif menu == "Prediksi":
         value=1.0
     )
 
-    slope = st.selectbox(
-        "Slope",
-        [0, 1, 2]
-    )
+  slope_option = st.selectbox(
+    "Slope ST",
+    [
+        "Upsloping",
+        "Flat",
+        "Downsloping"
+    ]
+)
 
-    ca = st.selectbox(
-        "CA",
-        [0, 1, 2, 3, 4]
-    )
+slope_mapping = {
+    "Upsloping": 0,
+    "Flat": 1,
+    "Downsloping": 2
+}
 
-    thal = st.selectbox(
-        "Thal",
-        [0, 1, 2, 3]
-    )
+slope = slope_mapping[slope_option]
+
+   ca_option = st.selectbox(
+    "Jumlah Pembuluh Darah Utama",
+    [
+        "0 Pembuluh",
+        "1 Pembuluh",
+        "2 Pembuluh",
+        "3 Pembuluh",
+        "4 Pembuluh"
+    ]
+)
+
+ca_mapping = {
+    "0 Pembuluh": 0,
+    "1 Pembuluh": 1,
+    "2 Pembuluh": 2,
+    "3 Pembuluh": 3,
+    "4 Pembuluh": 4
+}
+
+ca = ca_mapping[ca_option]
+
+   thal_option = st.selectbox(
+    "Hasil Thal",
+    [
+        "Unknown",
+        "Normal",
+        "Fixed Defect",
+        "Reversible Defect"
+    ]
+)
+
+thal_mapping = {
+    "Unknown": 0,
+    "Normal": 1,
+    "Fixed Defect": 2,
+    "Reversible Defect": 3
+}
+
+thal = thal_mapping[thal_option]
 
     # Membuat data input
     input_data = pd.DataFrame(
